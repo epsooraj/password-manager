@@ -1,7 +1,9 @@
 from django.utils import timezone
+from django.conf import settings
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.reverse import reverse
+from cryptography.fernet import Fernet
 
 from . import models
 from user import serializers as user_serializers
@@ -19,25 +21,39 @@ class SharedUserSerializer(serializers.ModelSerializer):
 
 class PasswordSerializer(serializers.ModelSerializer):
 
-    password = serializers.SerializerMethodField()
+    password_dc = serializers.SerializerMethodField()
     share_url = serializers.SerializerMethodField()
     complexity = serializers.SerializerMethodField()
     expired = serializers.SerializerMethodField()
 
+    user = serializers.PrimaryKeyRelatedField(
+        read_only=True, default=serializers.CurrentUserDefault())
+
     class Meta:
         model = models.Password
-        fields = ('id', 'domain', 'passwd', 'password', 'expiry', 'share_url',
+        fields = ('id', 'domain', 'password', 'password_dc', 'expiry', 'share_url',
                   'created_at', 'expired', 'complexity', 'user')
         read_only_fields = ('created_at', 'user')
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
     def save(self, **kwargs):
         """Include default for read_only `user` field"""
         kwargs["user"] = self.fields["user"].get_default()
+
+        # Encrypt password
+        fernet = Fernet(settings.ENC_KEY)
+        encPassword = fernet.encrypt(
+            self.validated_data.pop('password').encode())
+        kwargs["password"] = encPassword.decode()
+
         return super().save(**kwargs)
 
-    def get_password(self, obj):
-        # Decrypt the obj.passwd
-        return obj.passwd
+    def get_password_dc(self, obj):
+        # Decrypt the obj.password
+        fernet = Fernet(settings.ENC_KEY)
+        return fernet.decrypt(bytes(obj.password, 'utf-8'))
 
     def get_share_url(self, obj):
         url = reverse('password-list',

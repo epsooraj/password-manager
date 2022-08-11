@@ -27,7 +27,7 @@ class Password(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     domain = models.CharField(max_length=100, verbose_name='Domain')
-    passwd = models.TextField(verbose_name='Password')
+    password = models.TextField(verbose_name='Password')
     expiry = models.IntegerField(verbose_name='Expiry in days', default=-1)
 
     access_users = models.ManyToManyField(to=Access)
