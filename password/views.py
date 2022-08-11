@@ -25,3 +25,15 @@ class SharePermissionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         pid = self.kwargs.get('pid')
         return models.Password.objects.get(id=pid).access_users.all()
+
+    def perform_create(self, serializer):
+        obj = serializer.save()
+
+        try:
+            pid = self.kwargs.get('pid')
+            password_obj = models.Password.objects.get(id=pid)
+            password_obj.access_users.add(obj)
+        except ObjectDoesNotExist:
+            pass
+
+        return obj

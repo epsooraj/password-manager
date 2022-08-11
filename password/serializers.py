@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
@@ -7,7 +8,9 @@ from user import serializers as user_serializers
 
 
 class SharedUserSerializer(serializers.ModelSerializer):
-    user = user_serializers.UserSerializer()
+    user = user_serializers.UserSerializer(read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(
+        write_only=True, source='user', queryset=User.objects.all())
 
     class Meta:
         model = models.Access
@@ -15,16 +18,11 @@ class SharedUserSerializer(serializers.ModelSerializer):
 
 
 class PasswordSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        read_only=True, default=serializers.CurrentUserDefault())
 
     password = serializers.SerializerMethodField()
     share_url = serializers.SerializerMethodField()
     complexity = serializers.SerializerMethodField()
     expired = serializers.SerializerMethodField()
-
-    # access_users = SharedUserSerializer(many=True)
-    user = user_serializers.UserSerializer()
 
     class Meta:
         model = models.Password
