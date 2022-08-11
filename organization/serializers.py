@@ -5,11 +5,21 @@ from password import models as password_models
 from password import serializers as password_serializers
 
 
+class PasswordFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    def get_queryset(self):
+        request = self.context.get('request', None)
+        queryset = super(PasswordFilteredPrimaryKeyRelatedField,
+                         self).get_queryset()
+        if not request or not queryset:
+            return None
+        return queryset.filter(user=request.user)
+
+
 class OrganizationPasswordSerializer(serializers.ModelSerializer):
 
     password = password_serializers.PasswordSerializer(read_only=True)
-    password_id = serializers.PrimaryKeyRelatedField(
-        write_only=True, source='password', queryset=password_models.Password.objects.all())
+    password_id = PasswordFilteredPrimaryKeyRelatedField(
+        queryset=password_models.Password.objects)
 
     class Meta:
         model = models.OrganizationPassword
