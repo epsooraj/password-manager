@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from cryptography.fernet import Fernet
+from password_strength import PasswordStats
 
 from . import models
 from user import serializers as user_serializers
@@ -23,7 +24,6 @@ class PasswordSerializer(serializers.ModelSerializer):
 
     password_dc = serializers.SerializerMethodField()
     share_url = serializers.SerializerMethodField()
-    complexity = serializers.SerializerMethodField()
     expired = serializers.SerializerMethodField()
 
     user = serializers.PrimaryKeyRelatedField(
@@ -32,8 +32,8 @@ class PasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Password
         fields = ('id', 'domain', 'password', 'password_dc', 'expiry', 'share_url',
-                  'created_at', 'expired', 'complexity', 'user')
-        read_only_fields = ('created_at', 'user')
+                  'created_at', 'expired', 'strength', 'user')
+        read_only_fields = ('created_at', 'user', 'strength')
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -43,10 +43,15 @@ class PasswordSerializer(serializers.ModelSerializer):
         kwargs["user"] = self.fields["user"].get_default()
 
         # Encrypt password
+        passwd = self.validated_data.pop('password')
         fernet = Fernet(settings.ENC_KEY)
-        encPassword = fernet.encrypt(
-            self.validated_data.pop('password').encode())
+        encPassword = fernet.encrypt(passwd.encode())
         kwargs["password"] = encPassword.decode()
+
+        # Password strength
+        stats = PasswordStats(passwd)
+        print(stats.strength())
+        kwargs['strength'] = stats.strength() * 100
 
         return super().save(**kwargs)
 
@@ -62,9 +67,6 @@ class PasswordSerializer(serializers.ModelSerializer):
         url = url.replace('/.', '/')
 
         return url
-
-    def get_complexity(self, obj):
-        return "strong"
 
     def get_expired(self, obj):
         now = timezone.now()
