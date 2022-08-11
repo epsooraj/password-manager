@@ -18,7 +18,9 @@ class PasswordFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField)
 class OrganizationPasswordSerializer(serializers.ModelSerializer):
 
     password = password_serializers.PasswordSerializer(read_only=True)
+
     password_id = PasswordFilteredPrimaryKeyRelatedField(
+        write_only=True, source='password',
         queryset=password_models.Password.objects)
 
     class Meta:
