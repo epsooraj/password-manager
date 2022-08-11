@@ -11,6 +11,8 @@ class Access(models.Model):
         ('w', 'Write')
     )
     permission = models.CharField(max_length=1, choices=PERMISSION_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return f'{str(self.user)} - {str(self.permission)}'

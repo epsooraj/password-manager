@@ -3,10 +3,15 @@ from rest_framework import routers
 
 from . import views
 
-router = routers.DefaultRouter()
+password_router = routers.DefaultRouter()
+password_router.register(
+    '', viewset=views.PasswordViewSet, basename='password')
 
-router.register('', viewset=views.PasswordViewSet, basename='password')
+share_router = routers.DefaultRouter()
+share_router.register('',
+                      viewset=views.SharePermissionViewSet, basename='shared-user')
 
 urlpatterns = [
-    path('', include(router.urls), name='password-url')
+    path('', include(password_router.urls)),
+    path('<int:pid>/share/', include(share_router.urls)),
 ]

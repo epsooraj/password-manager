@@ -3,6 +3,15 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 from . import models
+from user import serializers as user_serializers
+
+
+class SharedUserSerializer(serializers.ModelSerializer):
+    user = user_serializers.UserSerializer()
+
+    class Meta:
+        model = models.Access
+        fields = "__all__"
 
 
 class PasswordSerializer(serializers.ModelSerializer):
@@ -13,6 +22,9 @@ class PasswordSerializer(serializers.ModelSerializer):
     share_url = serializers.SerializerMethodField()
     complexity = serializers.SerializerMethodField()
     expired = serializers.SerializerMethodField()
+
+    # access_users = SharedUserSerializer(many=True)
+    user = user_serializers.UserSerializer()
 
     class Meta:
         model = models.Password
@@ -38,7 +50,7 @@ class PasswordSerializer(serializers.ModelSerializer):
         return url
 
     def get_complexity(self, obj):
-        return "Strong"
+        return "strong"
 
     def get_expired(self, obj):
         now = timezone.now()
