@@ -39,7 +39,7 @@ class PasswordSerializer(serializers.ModelSerializer):
         }
 
     def save(self, **kwargs):
-        """Include default for read_only `user` field"""
+        # Include default for read_only `user` field
         kwargs["user"] = self.fields["user"].get_default()
 
         # Encrypt password
