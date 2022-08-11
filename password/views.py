@@ -11,7 +11,6 @@ class PasswordViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.OwnerOrUserWithOwnersPermission,)
 
     def get_queryset(self):
-
         if self.kwargs.get('pk'):
             return models.Password.objects.all()
 
