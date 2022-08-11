@@ -1,8 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
 
+api_version = "v1"
+
+api_base = f"api/{api_version}"
+
 urlpatterns = [
-    path('password/', include('password.urls')),
-    path('organization/', include('organization.urls')),
-    path('admin/', admin.site.urls),
+    path(f'{api_base}/password/', include('password.urls')),
+    path(f'{api_base}/organization/', include('organization.urls')),
+    path(f'{api_base}/admin/', admin.site.urls),
 ]
