@@ -136,3 +136,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ENC_KEY = 'XG3wYYxKd2b99HBPnDfTAWY0zOTZ_lkGTXm1OInvktw='
+
+STATIC_ROOT = BASE_DIR / 'static'

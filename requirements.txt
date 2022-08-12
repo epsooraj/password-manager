@@ -4,3 +4,4 @@ Django==4.1
 django-filter==22.1
 djangorestframework==3.13.1
 password-strength==0.0.3.post2
+gunicorn==20.1.0
