@@ -15,10 +15,10 @@ class OwnerOrUserInOrganizationPermission(permissions.BasePermission):
         # Check if user has access rights
         # Read
         if request.method in permissions.SAFE_METHODS:
-            return len(obj.shared_users.filter(user__in=[request.user])) > 0
+            return len(obj.members.filter(user__in=[request.user])) > 0
 
         # Write
-        return len(obj.shared_users.filter(user__in=[request.user], permission='w')) > 0
+        return len(obj.members.filter(user__in=[request.user], permission='w')) > 0
 
 
 class OwnerOnlySharePermission(permissions.BasePermission):
@@ -43,9 +43,9 @@ class OwnerOrUserInOrgPasswordPermission(permissions.BasePermission):
 
             if request.method == 'GET':
                 return len(models.Organization.objects.filter(id=oid).first(
-                ).shared_users.filter(user__in=[request.user])) > 0
+                ).members.filter(user__in=[request.user])) > 0
             else:
-                return len(models.Organization.objects.filter(id=oid).first().shared_users.filter(
+                return len(models.Organization.objects.filter(id=oid).first().members.filter(
                     user__in=[request.user], permission='w')) > 0
 
     def has_object_permission(self, request, view, obj):
@@ -55,7 +55,7 @@ class OwnerOrUserInOrgPasswordPermission(permissions.BasePermission):
         # Check if user has access rights
         # Read
         if request.method in permissions.SAFE_METHODS:
-            return len(obj.organization_set.all().first().shared_users.filter(user__in=[request.user])) > 0
+            return len(obj.organization_set.all().first().members.filter(user__in=[request.user])) > 0
 
         # Write
-        return len(obj.organization_set.all().first().shared_users.filter(user__in=[request.user], permission='w')) > 0
+        return len(obj.organization_set.all().first().members.filter(user__in=[request.user], permission='w')) > 0

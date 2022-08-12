@@ -14,7 +14,7 @@ class OrganizationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # Filtering user's organization
         # and organizations which user has access to
-        return (models.Organization.objects.filter(user=self.request.user) | models.Organization.objects.filter(shared_users__user=self.request.user)).distinct()
+        return (models.Organization.objects.filter(user=self.request.user) | models.Organization.objects.filter(members__user=self.request.user)).distinct()
 
 
 class OrgAccessUserViewSet(viewsets.ModelViewSet):
@@ -23,7 +23,7 @@ class OrgAccessUserViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         pid = self.kwargs.get('oid')
-        return models.Organization.objects.get(id=pid).shared_users.all()
+        return models.Organization.objects.get(id=pid).members.all()
 
     def perform_create(self, serializer):
         obj = serializer.save()
@@ -31,7 +31,7 @@ class OrgAccessUserViewSet(viewsets.ModelViewSet):
         try:
             oid = self.kwargs.get('oid')
             org_obj = models.Organization.objects.get(id=oid)
-            org_obj.shared_users.add(obj)
+            org_obj.members.add(obj)
         except ObjectDoesNotExist:
             pass
 

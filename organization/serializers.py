@@ -30,7 +30,7 @@ class OrganizationPasswordSerializer(serializers.ModelSerializer):
 
 class OrganizationSerializer(serializers.ModelSerializer):
 
-    shared_users = password_serializers.SharedUserSerializer(
+    members = password_serializers.SharedUserSerializer(
         many=True, read_only=True)
     passwords = OrganizationPasswordSerializer(many=True, read_only=True)
     user = serializers.PrimaryKeyRelatedField(
@@ -39,7 +39,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Organization
         fields = ('id', 'name', 'passwords', 'user',
-                  'shared_users', 'created_at')
+                  'members', 'created_at')
         read_only_fields = ('user', 'created_at')
 
     def save(self, **kwargs):

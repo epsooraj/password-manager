@@ -18,7 +18,7 @@ class Organization(models.Model):
     user = models.ForeignKey(
         to=User, on_delete=models.CASCADE, related_name='organizations')
 
-    shared_users = models.ManyToManyField(to=password_models.Access)
+    members = models.ManyToManyField(to=password_models.Access)
 
     passwords = models.ManyToManyField(to=OrganizationPassword)
 

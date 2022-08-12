@@ -17,6 +17,6 @@ password_router.register(
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('<int:oid>/share/', include(share_router.urls)),
-    path('<int:oid>/password/', include(password_router.urls)),
+    path('<int:oid>/members/', include(share_router.urls)),
+    path('<int:oid>/passwords/', include(password_router.urls)),
 ]
