@@ -25,7 +25,8 @@ env = environ.Env(
     # set casting, default value
     DEBUG=(bool, False),
     SECRET_KEY=(
-        str, 'django-insecure-j&hc1rsx_vll19l!3rlc9_bigg5ug*#azfy)+qrl*$_6d(ap0c')
+        str, 'django-insecure-j&hc1rsx_vll19l!3rlc9_bigg5ug*#azfy)+qrl*$_6d(ap0c'),
+    DATABSE_URL=(str, "")
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,8 +44,10 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost',
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', 'web',
                  '127.0.0.1', 'psswdmanager.herokuapp.com']
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
 
 
 # Application definition
@@ -106,7 +109,18 @@ DATABASES = {
     }
 }
 
-if DEBUG == False:
+if DEBUG == False and env('DATABSE_URL') != "":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'postgres',
+            'USER': 'postgres',
+            'HOST': 'db',
+            'PORT': 5432,
+        }
+    }
+
+elif DEBUG == False:
     db_from_env = dj_database_url.config(conn_max_age=600)
     DATABASES['default'].update(db_from_env)
 
