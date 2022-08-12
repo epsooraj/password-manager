@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'password.apps.PasswordConfig',
     'organization.apps.OrganizationConfig',
     'user.apps.UserConfig',
-    'whitenoise.runserver_nostatic',
+    # 'whitenoise.runserver_nostatic',
 ]
 
 MIDDLEWARE = [
@@ -158,4 +158,20 @@ ENC_KEY = 'XG3wYYxKd2b99HBPnDfTAWY0zOTZ_lkGTXm1OInvktw='
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}
