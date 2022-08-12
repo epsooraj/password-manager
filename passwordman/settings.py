@@ -14,6 +14,13 @@ from pathlib import Path
 import dj_database_url
 import environ
 
+try:
+    # Patches for heroku
+    import django_heroku
+    django_heroku.settings(locals())
+except:
+    pass
+
 env = environ.Env(
     # set casting, default value
     DEBUG=(bool, False),
