@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'password.apps.PasswordConfig',
     'organization.apps.OrganizationConfig',
     'user.apps.UserConfig',
-    # 'whitenoise.runserver_nostatic',
+    'whitenoise.runserver_nostatic',
 ]
 
 MIDDLEWARE = [
